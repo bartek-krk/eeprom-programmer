@@ -158,6 +158,7 @@ public class MainFrame extends JFrame
 		public BottomPanel()
 		{
 			add(makeSaveToCSVButton());
+			add(makeOpenButton());
 		}
 		
 		private JButton makeSaveToCSVButton()
@@ -165,6 +166,15 @@ public class MainFrame extends JFrame
 			JButton returnButton = new JButton("Save as CSV");
 			returnButton.addActionListener(event -> {
 				array.saveAsCSV();
+			});
+			return returnButton;
+		}
+		
+		private JButton makeOpenButton()
+		{
+			JButton returnButton = new JButton("Open from CSV");
+			returnButton.addActionListener(event -> {
+				MainFrame.this.array = ByteArray.openCSV();
 			});
 			return returnButton;
 		}

@@ -2,7 +2,12 @@ package logic;
 
 import java.awt.Toolkit;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 
 import javax.swing.JFileChooser;
@@ -67,6 +72,98 @@ public class ByteArray
 			try (PrintWriter out = new PrintWriter(directory)) {out.println(output);}
 			catch(FileNotFoundException ex) {ex.printStackTrace();}
 		}
+	}
+	
+	public static ByteArray openCSV()
+	{
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		int result = chooser.showOpenDialog(null);
+		String pathToFile = "";
+		if(result == JFileChooser.APPROVE_OPTION)
+		{
+			pathToFile = chooser.getSelectedFile().getPath();
+			if(pathToFile.contains(".csv"))
+			{
+				String incomingFile = "";
+				try
+				{
+					incomingFile = new String(Files.readAllBytes(Paths.get(pathToFile)));
+				}
+				catch(IOException ex) {ex.printStackTrace();}
+								
+				ArrayList<String> keys = new ArrayList<String>();
+				ArrayList<String> values = new ArrayList<String>();
+				
+				ArrayList<Integer> separators = new ArrayList<Integer>();
+				
+				separators.add(0);				
+				for(int i=0;i<incomingFile.length();i++) if(incomingFile.charAt(i) == ';' || incomingFile.charAt(i) == '\n') separators.add(i);
+				separators.add(incomingFile.length());
+				
+				ArrayList<String> results = new ArrayList<String>();
+				for(int i=0;i<separators.size()-1;i++) results.add(incomingFile.substring(separators.get(i), separators.get(i+1)));
+				
+				separators = null;
+				incomingFile = null;
+				System.gc();
+				
+				for(int i=0;i<results.size();i+=2) keys.add(results.get(i));
+				for(int i=1;i<results.size();i+=2) values.add(results.get(i));
+				
+				for(int i=0;i<keys.size();i++)
+				{
+					if(keys.get(i).contains("\n"))
+					{
+						String s = keys.get(i).substring(0,keys.get(i).indexOf('\n')) + keys.get(i).substring(keys.get(i).indexOf('\n')+1);
+						keys.set(i, s);
+					}
+				}
+				
+				for(int i=0;i<values.size();i++)
+				{
+					if(values.get(i).contains(";"))
+					{
+						String s = values.get(i).substring(0,values.get(i).indexOf(';')) + values.get(i).substring(values.get(i).indexOf(';')+1);
+						values.set(i, s);
+					}
+				}
+				
+				ArrayList<Integer> addresses = new ArrayList<Integer>();
+				keys.remove(keys.size()-1);
+				for(String s : keys) addresses.add(Integer.parseInt(s));
+				keys = null;
+				
+				ArrayList<Integer> data = new ArrayList<Integer>();
+				values.remove(values.size()-1);
+				for(String s : values) data.add(Integer.parseInt(s));
+				values = null;
+				System.gc();
+				
+				int maxAddress = Integer.toBinaryString(Collections.max(addresses)).length();
+				int maxData = Integer.toBinaryString(Collections.max(data)).length();
+				
+				ByteArray returnArray = new ByteArray(new EEPROM("sampleName",maxAddress,maxData,"www.google.com"));
+				
+				Hashtable<Integer,Integer> dict = new Hashtable<Integer,Integer>();
+				
+				for(int i=0;i<addresses.size();i++)
+				{
+					dict.put(addresses.get(i), data.get(i));
+				}
+				
+				returnArray.array = dict;
+				
+				return returnArray;
+			}
+			else
+			{
+				Toolkit.getDefaultToolkit().beep();
+				JOptionPane.showMessageDialog(null, "Only *.csv files allowed!", "Invalid input format", JOptionPane.WARNING_MESSAGE);
+				return null;
+			}
+		}
+		else return null;
 	}
 	
 	public Hashtable<Integer,Integer> getArray() {return this.array;}

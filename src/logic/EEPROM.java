@@ -24,6 +24,7 @@ public class EEPROM
 	private int numberOfDataBits;
 	private String datasheetURL;
 	
+	public EEPROM() {}
 	public EEPROM(String aName, int aNOAB, int aNODB, String aURL)
 	{
 		this.name = aName;
