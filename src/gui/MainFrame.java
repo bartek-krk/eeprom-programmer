@@ -29,7 +29,6 @@ public class MainFrame extends JFrame
 	ByteArray array;
 	Table table;
 	
-	JButton refresh;
 	EEPROMselection es;
 	BottomPanel bottomPanel;
 
@@ -40,26 +39,11 @@ public class MainFrame extends JFrame
 		this.setTitle("EEPROM programmer");
 		this.setLayout(new GridBagLayout());
 		es = new EEPROMselection();
-		this.add(es, new GBC(0,0,1,1));
-		refresh = new JButton("Refresh");
-		this.add(refresh, new GBC(1,0,1,1));
-		refresh.addActionListener(event -> {
-			ByteArray buffer = array;
-			EEPROMsAvailable = EEPROM.getEEPROMsList();
-			this.remove(table);
-			this.remove(es);
-			table = new Table();
-			es = new EEPROMselection();
-			this.add(es, new GBC(0,0,1,1));
-			this.add(table, new GBC(0,1,2,1));
-			this.revalidate();
-			this.array = buffer;
-			buffer = null;
-		});
+		this.add(es, new GBC(0,0));
 		table = new Table();
-		this.add(table, new GBC(0,1,2,1));
+		this.add(table, new GBC(0,1));
 		bottomPanel = new BottomPanel();
-		this.add(bottomPanel, new GBC(0,2,2,1));
+		this.add(bottomPanel, new GBC(0,2));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		this.pack();
@@ -89,6 +73,18 @@ public class MainFrame extends JFrame
 			returnList.addActionListener(event -> {
 				selectedEEPROM = EEPROMsAvailable.get(returnList.getSelectedIndex());
 				array = new ByteArray(selectedEEPROM);
+				ByteArray buffer = null;
+				if(array != null) buffer = array;
+				EEPROMsAvailable = EEPROM.getEEPROMsList();
+				MainFrame.this.remove(table);
+				MainFrame.this.remove(es);
+				table = new Table();
+				es = new EEPROMselection();
+				MainFrame.this.add(es, new GBC(0,0));
+				MainFrame.this.add(table, new GBC(0,1));
+				MainFrame.this.revalidate();
+				if(buffer != null) MainFrame.this.array = buffer;
+				buffer = null;
 			});
 			return returnList;
 		}
@@ -109,6 +105,18 @@ public class MainFrame extends JFrame
 			JButton returnButton = new JButton("New EEPROM");
 			returnButton.addActionListener(event -> {
 				new AddEEPROMFrame();
+				ByteArray buffer = null;
+				if(array != null) buffer = array;
+				EEPROMsAvailable = EEPROM.getEEPROMsList();
+				MainFrame.this.remove(table);
+				MainFrame.this.remove(es);
+				table = new Table();
+				es = new EEPROMselection();
+				MainFrame.this.add(es, new GBC(0,0));
+				MainFrame.this.add(table, new GBC(0,1));
+				MainFrame.this.revalidate();
+				if(buffer != null) MainFrame.this.array = buffer;
+				buffer = null;
 			});
 			return returnButton;
 		}
@@ -178,6 +186,18 @@ public class MainFrame extends JFrame
 			JButton returnButton = new JButton("Open from CSV");
 			returnButton.addActionListener(event -> {
 				MainFrame.this.array = ByteArray.openCSV();
+				ByteArray buffer = null;
+				if(array != null) buffer = array;
+				EEPROMsAvailable = EEPROM.getEEPROMsList();
+				MainFrame.this.remove(table);
+				MainFrame.this.remove(es);
+				table = new Table();
+				es = new EEPROMselection();
+				MainFrame.this.add(es, new GBC(0,0));
+				MainFrame.this.add(table, new GBC(0,1));
+				MainFrame.this.revalidate();
+				if(buffer != null) MainFrame.this.array = buffer;
+				buffer = null;
 			});
 			return returnButton;
 		}
