@@ -44,6 +44,7 @@ public class MainFrame extends JFrame
 		refresh = new JButton("Refresh");
 		this.add(refresh, new GBC(1,0,1,1));
 		refresh.addActionListener(event -> {
+			ByteArray buffer = array;
 			EEPROMsAvailable = EEPROM.getEEPROMsList();
 			this.remove(table);
 			this.remove(es);
@@ -52,6 +53,8 @@ public class MainFrame extends JFrame
 			this.add(es, new GBC(0,0,1,1));
 			this.add(table, new GBC(0,1,2,1));
 			this.revalidate();
+			this.array = buffer;
+			buffer = null;
 		});
 		table = new Table();
 		this.add(table, new GBC(0,1,2,1));
