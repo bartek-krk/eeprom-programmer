@@ -3,6 +3,8 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.GridBagLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,13 +26,14 @@ import logic.EEPROM;
 
 public class MainFrame extends JFrame
 {
-	ArrayList<EEPROM> EEPROMsAvailable;
-	EEPROM selectedEEPROM;
-	ByteArray array;
-	Table table;
+	private ArrayList<EEPROM> EEPROMsAvailable;
+	private EEPROM selectedEEPROM;
+	private ByteArray array;
+	private Table table;
 	
-	EEPROMselection es;
-	BottomPanel bottomPanel;
+	private EEPROMselection es;
+	private BottomPanel bottomPanel;
+	private int EEPROMselected = 0;
 
 	
 	public MainFrame()
@@ -66,12 +69,13 @@ public class MainFrame extends JFrame
 			for (EEPROM element : EEPROMsAvailable) returnList.addItem(element.getName());
 			if(returnList.getItemCount() > 0)
 			{
-				selectedEEPROM = EEPROMsAvailable.get(0);
-				returnList.setSelectedIndex(0);
+				selectedEEPROM = EEPROMsAvailable.get(EEPROMselected);
+				returnList.setSelectedIndex(EEPROMselected);
 				array = new ByteArray(selectedEEPROM);
 			}
 			returnList.addActionListener(event -> {
 				selectedEEPROM = EEPROMsAvailable.get(returnList.getSelectedIndex());
+				EEPROMselected = returnList.getSelectedIndex();
 				array = new ByteArray(selectedEEPROM);
 				ByteArray buffer = null;
 				if(array != null) buffer = array;
@@ -83,6 +87,7 @@ public class MainFrame extends JFrame
 				MainFrame.this.add(es, new GBC(0,0));
 				MainFrame.this.add(table, new GBC(0,1));
 				MainFrame.this.revalidate();
+				MainFrame.this.pack();
 				if(buffer != null) MainFrame.this.array = buffer;
 				buffer = null;
 			});
@@ -105,19 +110,7 @@ public class MainFrame extends JFrame
 			JButton returnButton = new JButton("New EEPROM");
 			returnButton.addActionListener(event -> {
 				new AddEEPROMFrame();
-				ByteArray buffer = null;
-				if(array != null) buffer = array;
-				EEPROMsAvailable = EEPROM.getEEPROMsList();
-				MainFrame.this.remove(table);
-				MainFrame.this.remove(es);
-				table = new Table();
-				es = new EEPROMselection();
-				MainFrame.this.add(es, new GBC(0,0));
-				MainFrame.this.add(table, new GBC(0,1));
-				MainFrame.this.revalidate();
-				if(buffer != null) MainFrame.this.array = buffer;
-				buffer = null;
-			});
+				});
 			return returnButton;
 		}
 		
@@ -144,7 +137,7 @@ public class MainFrame extends JFrame
 			returnTable.getTableHeader().setReorderingAllowed(false);
 			DefaultTableModel model = new DefaultTableModel();
 			model.setColumnIdentifiers(labels);
-			for(int key : array.getArray().keySet()) model.addRow(new String[] {Integer.toHexString(key),Integer.toHexString(array.getArray().get(key))});
+			for(int key : array.getArray().keySet()) model.addRow(new String[] {Integer.toHexString(key).toUpperCase(),Integer.toHexString(array.getArray().get(key)).toUpperCase()});
 			model.addTableModelListener(l -> {
 				int column = l.getColumn();
 				int row = l.getFirstRow();
@@ -156,7 +149,7 @@ public class MainFrame extends JFrame
 				int update = 0;
 				if(radix != 10) update = Integer.parseInt(updateString.substring(2),radix);
 				else update = Integer.parseInt(updateString);
-				array.getArray().replace(Integer.parseInt(model.getValueAt(row, column-1).toString(),16), update);
+				array.setData(Integer.parseInt(model.getValueAt(row, column-1).toString(),16), update);
 			});
 			returnTable.setModel(model);
 			
@@ -196,6 +189,7 @@ public class MainFrame extends JFrame
 				MainFrame.this.add(es, new GBC(0,0));
 				MainFrame.this.add(table, new GBC(0,1));
 				MainFrame.this.revalidate();
+				MainFrame.this.pack();
 				if(buffer != null) MainFrame.this.array = buffer;
 				buffer = null;
 			});
