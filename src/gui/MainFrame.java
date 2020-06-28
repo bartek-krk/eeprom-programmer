@@ -31,6 +31,7 @@ public class MainFrame extends JFrame
 	
 	JButton refresh;
 	EEPROMselection es;
+	BottomPanel bottomPanel;
 
 	
 	public MainFrame()
@@ -54,6 +55,8 @@ public class MainFrame extends JFrame
 		});
 		table = new Table();
 		this.add(table, new GBC(0,1,2,1));
+		bottomPanel = new BottomPanel();
+		this.add(bottomPanel, new GBC(0,2,2,1));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		this.pack();
@@ -111,7 +114,7 @@ public class MainFrame extends JFrame
 	
 	private class Table extends JPanel
 	{
-		private String[] labels = new String [] {"Address (0x___)", "Data(DEC/BIN/HEX)"};
+		private String[] labels = new String [] {"Address (0x___)", "Data(DEC / BIN:0b__ / HEX:0x__)"};
 		
 		public Table()
 		{
@@ -142,10 +145,28 @@ public class MainFrame extends JFrame
 				int update = 0;
 				if(radix != 10) update = Integer.parseInt(updateString.substring(2),radix);
 				else update = Integer.parseInt(updateString);
+				array.getArray().replace(Integer.parseInt(model.getValueAt(row, column-1).toString(),16), update);
 			});
 			returnTable.setModel(model);
 			
 			return returnTable;
+		}
+	}
+	
+	private class BottomPanel extends JPanel
+	{
+		public BottomPanel()
+		{
+			add(makeSaveToCSVButton());
+		}
+		
+		private JButton makeSaveToCSVButton()
+		{
+			JButton returnButton = new JButton("Save as CSV");
+			returnButton.addActionListener(event -> {
+				array.saveAsCSV();
+			});
+			return returnButton;
 		}
 	}
 }
