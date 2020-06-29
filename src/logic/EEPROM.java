@@ -105,5 +105,6 @@ public class EEPROM
 	public int getAddressLength() {return this.numberOfAddressBits;}
 	public int getDataLength() {return this.numberOfDataBits;}
 	public String getURL() {return this.datasheetURL;}
+	public String getArduinoPath() {return System.getProperty("user.dir") + "/eeproms/" + this.name.replaceAll(" ", "_") + "Arduino/" + this.name.replaceAll(" ", "_") + "Arduino" + ".ino";}
 	
 }
