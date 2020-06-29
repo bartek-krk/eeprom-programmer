@@ -3,17 +3,20 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -60,6 +63,7 @@ public class MainFrame extends JFrame
 		{
 			this.add(makeList());
 			this.add(makeURLButton());
+			this.add(makeArduinoButton());
 			this.add(makeAddEEPROMButton());
 		}
 		
@@ -111,6 +115,25 @@ public class MainFrame extends JFrame
 			returnButton.addActionListener(event -> {
 				new AddEEPROMFrame();
 				});
+			return returnButton;
+		}
+		
+		private JButton makeArduinoButton()
+		{
+			JButton returnButton = new JButton("Arduino sketch");
+			returnButton.addActionListener(event -> {
+				String pathStr = MainFrame.this.selectedEEPROM.getArduinoPath();
+				if(Paths.get(pathStr).toFile().exists())
+				{
+					try {Desktop.getDesktop().open(Paths.get(pathStr).toFile());}
+					catch(IOException ex) {ex.printStackTrace();}
+				}
+				else
+				{
+					Toolkit.getDefaultToolkit().beep();
+					JOptionPane.showMessageDialog(null, "File does not exists!", "Error", JOptionPane.WARNING_MESSAGE);
+				}
+			});
 			return returnButton;
 		}
 		
