@@ -79,11 +79,15 @@ String readIgnore()
   String returnStr = "";
   if(Serial.available())
   {
-    String incomingStr = Serial.readStringUntil('\n');
-    unsigned int s = incomingStr.length()+1;
+    String incomingStr = Serial.readString();
+    unsigned int s = incomingStr.length();
     char incomingChar[s];
     incomingStr.toCharArray(incomingChar, s);
     for(int i=0;i<sizeof(incomingChar)/sizeof(char);i++) if(incomingChar[i]!='\n') returnStr = returnStr + String(incomingChar[i]);
   }
   return returnStr;
 }
+
+/*---------------------------------------------------------------------
+----------------------------END OF FILE--------------------------------
+-----------------------------------------------------------------------*/
