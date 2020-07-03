@@ -19,6 +19,7 @@ String incomingData = "";
 void setup()
 {
   Serial.begin(9600);
+  Serial.setTimeout(50);
   for(int i=0; i<sizeof(address)/sizeof(int); i++) pinMode(address[i],OUTPUT);
   for(int i=0; i<sizeof(data)/sizeof(int); i++) pinMode(data[i],OUTPUT);
 
