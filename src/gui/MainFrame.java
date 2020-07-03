@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.BorderLayout;
-import gnu.io.*;
 import java.awt.Desktop;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -27,6 +26,7 @@ import javax.swing.table.JTableHeader;
 
 import logic.ByteArray;
 import logic.EEPROM;
+import logic.Transmission;
 
 public class MainFrame extends JFrame
 {
@@ -185,6 +185,7 @@ public class MainFrame extends JFrame
 		{
 			add(makeSaveToCSVButton());
 			add(makeOpenButton());
+			add(makeSendButton());
 		}
 		
 		private JButton makeSaveToCSVButton()
@@ -214,6 +215,15 @@ public class MainFrame extends JFrame
 				MainFrame.this.pack();
 				if(buffer != null) MainFrame.this.array = buffer;
 				buffer = null;
+			});
+			return returnButton;
+		}
+		
+		private JButton makeSendButton()
+		{
+			JButton returnButton = new JButton("Send");
+			returnButton.addActionListener(event -> {
+				Transmission.writeData(Transmission.makeStatements(array.getArray()));
 			});
 			return returnButton;
 		}
