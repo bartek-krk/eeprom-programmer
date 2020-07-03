@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import gnu.io.*;
 import java.awt.Desktop;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -33,11 +34,9 @@ public class MainFrame extends JFrame
 	private EEPROM selectedEEPROM;
 	private ByteArray array;
 	private Table table;
-	
 	private EEPROMselection es;
 	private BottomPanel bottomPanel;
 	private int EEPROMselected = 0;
-
 	
 	public MainFrame()
 	{
