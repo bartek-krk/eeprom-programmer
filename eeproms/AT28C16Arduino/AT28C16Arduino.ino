@@ -1,5 +1,5 @@
-int address [11] = {22,24,26,28,30,32,34,36,38,40,42};
-int data [8] = {23,25,27,29,31,33,35,37};
+int address [11] = {22,24,26,28,30,32,34,36,38,40,42};    //LSB to MSB
+int data [8] = {23,25,27,29,31,33,35,37};     //LSB to MSB
 String state = "STANDBY";
 String incomingData = "";
 
