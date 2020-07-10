@@ -9,12 +9,7 @@ int data [8] = {23,25,27,29,31,33,35,37};   //LSB to MSB
  * @date:02-07-2020
  * 
  * This sketch is written for AtMEGA2560 for AtMEGA328 use shift registers
- * 
- * TRANSMISSION PROTOCOL:
- * 1. Send "TRANSMITTING" ro serial bus
- * 2. Send data in binary formatted: AAAAAAAAAAADDDDDDDD (A is address, D is data)
- * 3. Next set should be sent after "WRITEOK" acknowledge sequence is sent to the bus by Arduino
- * 4. After all data is sent, write "EOT" (end-of-transmission) sequence to the bus in order to terminate transmission
+ *
 */
 
 void setup()
