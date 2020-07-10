@@ -31,20 +31,16 @@ public class Transmission
 				{
 					try{Thread.sleep(100);} catch(InterruptedException ex) {ex.printStackTrace();}
 					PrintWriter outputStream = new PrintWriter(port.getOutputStream(),true);
-					outputStream.print("TRANSMITTING");
-					outputStream.flush();
 					int i = 2047;
 					for(String statement : input)
 					{
 						outputStream.print(statement);
 						System.out.println(statement);
 						outputStream.flush();
-						try{Thread.sleep(100);} catch(InterruptedException ex) {ex.printStackTrace();}
+						try{Thread.sleep(1000);} catch(InterruptedException ex) {ex.printStackTrace();}
 						System.out.println("data sent" + Integer.toString(i));
 						i--;
 					}
-					outputStream.print("EOT");
-					outputStream.flush();
 				}
 			};
 			loadingData.start();
@@ -60,7 +56,7 @@ public class Transmission
 			String keyBIN = Integer.toBinaryString(key);
 			String keyPrefix = "";
 			while(keyBIN.length() + keyPrefix.length() != 11) keyPrefix =keyPrefix + "0";
-			keyBIN = keyPrefix + keyBIN;
+			keyBIN = keyPrefix + keyBIN; ;
 			
 			String dataBIN = Integer.toBinaryString(input.get(key));
 			String dataPrefix = "";
