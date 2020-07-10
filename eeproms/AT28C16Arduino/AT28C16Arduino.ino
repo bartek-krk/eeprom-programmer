@@ -1,3 +1,5 @@
+#define WE 53
+
 int address [11] = {22,24,26,28,30,32,34,36,38,40,42};   //LSB to MSB
 int data [8] = {23,25,27,29,31,33,35,37};   //LSB to MSB
 
@@ -24,6 +26,9 @@ void setup()
 
   for(int i=0; i<sizeof(address)/sizeof(int); i++) digitalWrite(i, LOW);
   for(int i=0; i<sizeof(data)/sizeof(int); i++) digitalWrite(i, LOW);
+
+  pinMode(WE, OUTPUT);
+  digitalWrite(WE, HIGH);
 }
 
 void loop()
@@ -53,20 +58,10 @@ void loop()
       if(buffer == '1') digitalWrite(data[dataIterator], HIGH);
       dataIterator++;
     }
+    digitalWrite(WE, LOW);
+    delayMicroseconds(1);
+    digitalWrite(WE, HIGH);
   }
-}
-
-//FUNCTIONS
-
-String readIgnore()
-{
-  String returnStr = "";
-  String incomingStr = Serial.readStringUntil('\n');
-  unsigned int s = incomingStr.length()+1;
-  char incomingChar[s];
-  incomingStr.toCharArray(incomingChar, s);
-  for(int i=0;i<sizeof(incomingChar)/sizeof(char);i++) if(incomingChar[i]!='\n') returnStr = returnStr + String(incomingChar[i]);
-  return returnStr;
 }
 
 /*---------------------------------------------------------------------

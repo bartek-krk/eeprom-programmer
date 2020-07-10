@@ -1,9 +1,12 @@
 package logic;
 
+import java.awt.Toolkit;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.JOptionPane;
 
 import com.fazecast.jSerialComm.*;
 
@@ -20,30 +23,38 @@ public class Transmission
 		
 		if(!portNames.isEmpty()) port = SerialPort.getCommPort(portNames.get(0).toString());
 		
-		port.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-		if(port.openPort())
+		if(port != null)
 		{
-			try {TimeUnit.SECONDS.sleep(5);}
-			catch (InterruptedException e) {e.printStackTrace();}
-			Thread loadingData = new Thread() {
-				@Override
-				public void run()
-				{
-					try{Thread.sleep(100);} catch(InterruptedException ex) {ex.printStackTrace();}
-					PrintWriter outputStream = new PrintWriter(port.getOutputStream(),true);
-					int i = 2047;
-					for(String statement : input)
+			port.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
+			if(port.openPort())
+			{
+				try {TimeUnit.SECONDS.sleep(5);}
+				catch (InterruptedException e) {e.printStackTrace();}
+				Thread loadingData = new Thread() {
+					@Override
+					public void run()
 					{
-						outputStream.print(statement);
-						System.out.println(statement);
-						outputStream.flush();
-						try{Thread.sleep(1000);} catch(InterruptedException ex) {ex.printStackTrace();}
-						System.out.println("data sent" + Integer.toString(i));
-						i--;
+						try{Thread.sleep(100);} catch(InterruptedException ex) {ex.printStackTrace();}
+						PrintWriter outputStream = new PrintWriter(port.getOutputStream(),true);
+						int i = 2047;
+						for(String statement : input)
+						{
+							outputStream.print(statement);
+							System.out.println(statement);
+							outputStream.flush();
+							try{Thread.sleep(100);} catch(InterruptedException ex) {ex.printStackTrace();}
+							System.out.println("data sent" + Integer.toString(i));
+							i--;
+						}
 					}
-				}
-			};
-			loadingData.start();
+				};
+				loadingData.start();
+			}
+		}
+		else
+		{
+			Toolkit.getDefaultToolkit().beep();
+			JOptionPane.showMessageDialog(null, "Arduino not connected!", "Connection error", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 	
