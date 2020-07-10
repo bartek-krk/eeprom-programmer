@@ -1,7 +1,6 @@
-int address [11] = {22,24,26,28,30,32,34,36,38,40,42};    //LSB to MSB
-int data [8] = {23,25,27,29,31,33,35,37};     //LSB to MSB
-String state = "STANDBY";
-String incomingData = "";
+int address [11] = {22,24,26,28,30,32,34,36,38,40,42};   //LSB to MSB
+int data [8] = {23,25,27,29,31,33,35,37};   //LSB to MSB
+
 
 /*
  * @author: Bartosz Łukasik
@@ -23,54 +22,38 @@ void setup()
   for(int i=0; i<sizeof(address)/sizeof(int); i++) pinMode(address[i],OUTPUT);
   for(int i=0; i<sizeof(data)/sizeof(int); i++) pinMode(data[i],OUTPUT);
 
-
   for(int i=0; i<sizeof(address)/sizeof(int); i++) digitalWrite(i, LOW);
   for(int i=0; i<sizeof(data)/sizeof(int); i++) digitalWrite(i, LOW);
 }
 
 void loop()
 { 
+  String incoming = "";
+  if(Serial.available()) incoming = Serial.readStringUntil('\n');
+
+  if(incoming != "")
+  {
+    char chars[20];
+    incoming.toCharArray(chars,20);
   
-  
-  if(Serial.available() && state == "STANDBY") state = readIgnore();
-  if(Serial.available() && state == "TRANSMITTING")
-  {
-   {
-     String incoming = readIgnore();
-     if(incoming == "EOT") state = "EOT";
-     else
-     {
-      incomingData = incoming;
-      state = "WRITING";
-     }
-    }
-  }
-  if(state == "WRITING")
-  {
-    char states[20];
-    incomingData.toCharArray(states, 20);
-    int statesIterator = 0;
-    for(int i=0;i<sizeof(address)/sizeof(int); i++)
+    int addressIterator = 0;
+    for(int i=0; i<11; i++)
     {
-      if(states[statesIterator] == '1') digitalWrite(address[i], HIGH);
-      if(states[statesIterator] == '0') digitalWrite(address[i], LOW);
-      statesIterator++;
+      char buffer = chars[i];
+      if(buffer == '0') digitalWrite(address[addressIterator], LOW);
+      if(buffer == '1') digitalWrite(address[addressIterator], HIGH);
+      addressIterator++;
     }
-    for(int i=0;i<sizeof(data)/sizeof(int); i++)
+
+    int dataIterator = 0;
+    for(int i=11; i<20; i++)
     {
-      if(states[statesIterator] == '1') digitalWrite(data[i], HIGH);
-      if(states[statesIterator] == '0') digitalWrite(data[i], LOW);
-      statesIterator++;
+      char buffer = chars[i];
+      if(buffer == '0') digitalWrite(data[dataIterator], LOW);
+      if(buffer == '1') digitalWrite(data[dataIterator], HIGH);
+      dataIterator++;
     }
-    state = "TRANSMITTING";
-    Serial.write("WRITEOK");
   }
-  if(state == "EOT")
-  {
-    state = "STANDBY";
-    incomingData = "";
-  }
-  //Serial.println(incomingData);
 }
 
 //FUNCTIONS
@@ -78,14 +61,11 @@ void loop()
 String readIgnore()
 {
   String returnStr = "";
-  if(Serial.available())
-  {
-    String incomingStr = Serial.readStringUntil('\n');
-    unsigned int s = incomingStr.length()+1;
-    char incomingChar[s];
-    incomingStr.toCharArray(incomingChar, s);
-    for(int i=0;i<sizeof(incomingChar)/sizeof(char);i++) if(incomingChar[i]!='\n') returnStr = returnStr + String(incomingChar[i]);
-  }
+  String incomingStr = Serial.readStringUntil('\n');
+  unsigned int s = incomingStr.length()+1;
+  char incomingChar[s];
+  incomingStr.toCharArray(incomingChar, s);
+  for(int i=0;i<sizeof(incomingChar)/sizeof(char);i++) if(incomingChar[i]!='\n') returnStr = returnStr + String(incomingChar[i]);
   return returnStr;
 }
 
