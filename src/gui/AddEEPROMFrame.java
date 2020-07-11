@@ -21,6 +21,8 @@ public class AddEEPROMFrame extends JFrame
 	private JTextField NODBinput;
 	private JTextField URLinput;
 	
+	private boolean isFillingFinished = false;
+	
 	private JButton confirm;
 	
 	public AddEEPROMFrame()
@@ -46,11 +48,13 @@ public class AddEEPROMFrame extends JFrame
 		this.add(URLinput, new GBC(1,3));
 		
 		this.confirm = new JButton("Save");
-		confirm.addActionListener(event -> {new EEPROM(this.name,this.NOAB,this.NODB,this.URL).save(); this.setVisible(false);});
+		confirm.addActionListener(event -> {new EEPROM(this.name,this.NOAB,this.NODB,this.URL).save(); isFillingFinished = true; this.setVisible(false);});
 		this.add(confirm, new GBC(0,4,2,1));
 		
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
+	
+	public boolean getCompletionStatus() {return this.isFillingFinished;}
 }
