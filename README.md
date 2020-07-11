@@ -14,8 +14,8 @@ The project is made mainly for educational purposes. It enables the user to visu
 In order to use different Arduino model, there may be some changes that will have to be applied. All of those refer to Arduino sketch only, as the Java app is written in a manner, that excludes any hardware incompatibilities.
 Firstly, some models may have a smaller amount of digital I/O pins, which can be solved by using shift registers, such as 74HC595. Please note, that
 ```
-int address [11] = {22,24,26,28,30,32,34,36,38,40,42};   //LSB to MSB
-int data [8] = {23,25,27,29,31,33,35,37};   //LSB to MSB
+int address [11] = {22,24,26,28,30,32,34,36,38,40,42};   //MSB to LSB
+int data [8] = {23,25,27,29,31,33,35,37};   //MSB to LSB
 ```
 refer to digital pins of Arduino MEGA, connected to address and data pins of AT28C16 EEPROM.
 
