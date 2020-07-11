@@ -9,7 +9,7 @@ int data [8] = {23,25,27,29,31,33,35,37};   //LSB to MSB
  * @date:02-07-2020
  * 
  * This sketch is written for AtMEGA2560 for AtMEGA328 use shift registers
- *
+ * 
 */
 
 void setup()

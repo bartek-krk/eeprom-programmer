@@ -20,6 +20,9 @@ public class ByteArray
 	private final int maxAddress;
 	private final int maxData;
 	
+	private static final String ROW_SEPARATOR = "\n";
+	private static final String FIELD_SEPARATOR = ";";
+	
 	public Hashtable<Integer,Integer> array;
 	
 	public ByteArray(EEPROM eeprom)
@@ -57,19 +60,18 @@ public class ByteArray
 	public void saveAsCSV()
 	{
 		JFileChooser chooser = new JFileChooser();
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		int result = chooser.showOpenDialog(null);
 		String directory = "";
 		if(result == JFileChooser.APPROVE_OPTION)
 		{
 			directory = chooser.getSelectedFile().getPath();
-			String filename = JOptionPane.showInputDialog(null, "Enter filename:", "EEPROMdata");
-			directory = directory + "\\" + filename + ".csv";
+			directory = directory + ".csv";
 			
 			String output = "";
-			for(int key : array.keySet()) output += key + ";" + array.get(key) + "\n";
+			for(int key : array.keySet()) output += key + FIELD_SEPARATOR + array.get(key) + ROW_SEPARATOR;
 			
-			try (PrintWriter out = new PrintWriter(directory)) {out.println(output);}
+			try (PrintWriter out = new PrintWriter(directory)) {out.print(output);}
 			catch(FileNotFoundException ex) {ex.printStackTrace();}
 		}
 	}
@@ -94,49 +96,23 @@ public class ByteArray
 								
 				ArrayList<String> keys = new ArrayList<String>();
 				ArrayList<String> values = new ArrayList<String>();
+								
 				
-				ArrayList<Integer> separators = new ArrayList<Integer>();
+				String[] rows = incomingFile.split(ROW_SEPARATOR);
 				
-				separators.add(0);				
-				for(int i=0;i<incomingFile.length();i++) if(incomingFile.charAt(i) == ';' || incomingFile.charAt(i) == '\n') separators.add(i);
-				separators.add(incomingFile.length());
-				
-				ArrayList<String> results = new ArrayList<String>();
-				for(int i=0;i<separators.size()-1;i++) results.add(incomingFile.substring(separators.get(i), separators.get(i+1)));
-				
-				separators = null;
-				incomingFile = null;
-				System.gc();
-				
-				for(int i=0;i<results.size();i+=2) keys.add(results.get(i));
-				for(int i=1;i<results.size();i+=2) values.add(results.get(i));
-				
-				for(int i=0;i<keys.size();i++)
+				for(String row : rows)
 				{
-					if(keys.get(i).contains("\n"))
-					{
-						String s = keys.get(i).substring(0,keys.get(i).indexOf('\n')) + keys.get(i).substring(keys.get(i).indexOf('\n')+1);
-						keys.set(i, s);
-					}
+					String[] bufferedFields = row.split(FIELD_SEPARATOR);
+					keys.add(bufferedFields[0]);
+					values.add(bufferedFields[1]);
 				}
-				
-				for(int i=0;i<values.size();i++)
-				{
-					if(values.get(i).contains(";"))
-					{
-						String s = values.get(i).substring(0,values.get(i).indexOf(';')) + values.get(i).substring(values.get(i).indexOf(';')+1);
-						values.set(i, s);
-					}
-				}
-				
+								
 				ArrayList<Integer> addresses = new ArrayList<Integer>();
-				keys.remove(keys.size()-1);
-				for(String s : keys) addresses.add(Integer.parseInt(s));
+				for(String currentKey : keys) addresses.add(Integer.parseInt(currentKey));
 				keys = null;
 				
 				ArrayList<Integer> data = new ArrayList<Integer>();
-				values.remove(values.size()-1);
-				for(String s : values) data.add(Integer.parseInt(s));
+				for(String currentValue : values) data.add(Integer.parseInt(currentValue));
 				values = null;
 				System.gc();
 				
@@ -165,6 +141,8 @@ public class ByteArray
 		}
 		else return null;
 	}
+	
+
 	
 	public Hashtable<Integer,Integer> getArray() {return this.array;}
 }
